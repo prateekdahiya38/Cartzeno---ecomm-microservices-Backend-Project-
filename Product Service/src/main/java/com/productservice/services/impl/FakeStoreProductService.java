@@ -6,6 +6,8 @@ import com.productservice.exceptions.exceptions.FakeStoreException;
 import com.productservice.services.ProductService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class FakeStoreProductService implements ProductService {
@@ -15,9 +17,19 @@ public class FakeStoreProductService implements ProductService {
         this.fakeStoreClient = fakeStoreClient;
     }
 
+
     @Override
     public ProductDto getSingleProduct(int id) throws FakeStoreException {
          return fakeStoreClient.getFakeStoreSingleProduct(id);
+    }
 
+    @Override
+    public List<ProductDto> getAllProducts() throws FakeStoreException {
+        return fakeStoreClient.getAllFakeStoreProducts();
+    }
+
+    @Override
+    public ProductDto addProduct(ProductDto productDto) throws FakeStoreException {
+        return fakeStoreClient.addFakeStoreProduct(productDto);
     }
 }
