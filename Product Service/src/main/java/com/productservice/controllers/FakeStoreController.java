@@ -1,6 +1,6 @@
 package com.productservice.controllers;
 
-import com.productservice.dtos.FakeStoreProductDto;
+
 import com.productservice.dtos.ProductDto;
 import com.productservice.exceptions.exceptions.FakeStoreException;
 import com.productservice.services.ProductService;
@@ -22,7 +22,7 @@ public class FakeStoreController {
 
     @GetMapping("/products/{productId}")
     public ResponseEntity<ProductDto> getSingleProduct (@PathVariable("productId") int id) throws FakeStoreException {
-        return new ResponseEntity<>(productService.getSingleProduct(id), HttpStatus.OK);
+        return ResponseEntity.ok(productService.getSingleProduct(id));
     }
 
     @GetMapping ("/products")
@@ -33,5 +33,10 @@ public class FakeStoreController {
     @PostMapping("/products")
     public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDto) throws FakeStoreException {
         return new ResponseEntity<>(productService.addProduct(productDto),HttpStatus.OK);
+    }
+
+    @PutMapping("/products")
+    public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productDto) throws FakeStoreException {
+       return ResponseEntity.ok(productService.updateProduct(productDto));
     }
 }
