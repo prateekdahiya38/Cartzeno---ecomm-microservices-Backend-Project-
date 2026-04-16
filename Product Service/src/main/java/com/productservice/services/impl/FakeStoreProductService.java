@@ -32,4 +32,9 @@ public class FakeStoreProductService implements ProductService {
     public ProductDto addProduct(ProductDto productDto) throws FakeStoreException {
         return fakeStoreClient.addFakeStoreProduct(productDto);
     }
+
+    @Override
+    public ProductDto updateProduct(ProductDto productDto) throws FakeStoreException {
+        return fakeStoreClient.updateFakeStoreProduct(productDto);
+    }
 }

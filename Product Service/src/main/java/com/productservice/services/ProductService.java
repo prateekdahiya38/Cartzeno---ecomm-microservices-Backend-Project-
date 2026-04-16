@@ -12,4 +12,5 @@ public interface ProductService {
     ProductDto getSingleProduct(int id) throws FakeStoreException;
     List<ProductDto> getAllProducts() throws FakeStoreException;
     ProductDto addProduct(ProductDto productDto) throws FakeStoreException;
+    ProductDto updateProduct(ProductDto productDto) throws FakeStoreException;
 }
