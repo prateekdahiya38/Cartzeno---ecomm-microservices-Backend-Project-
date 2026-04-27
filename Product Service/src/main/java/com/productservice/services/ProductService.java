@@ -1,16 +1,15 @@
 package com.productservice.services;
 
-import com.productservice.dtos.ProductDto;
-import com.productservice.exceptions.exceptions.FakeStoreException;
+import com.productservice.dtos.ProductRequestSelfDto;
+import com.productservice.dtos.ProductResponseSelfDto;
 
 import java.util.List;
-
+import java.util.UUID;
 
 public interface ProductService {
-    String FAKE_STORE_PRODUCT_URL = "https://fakestoreapi.com/products";
-
-    ProductDto getSingleProduct(int id) throws FakeStoreException;
-    List<ProductDto> getAllProducts() throws FakeStoreException;
-    ProductDto addProduct(ProductDto productDto) throws FakeStoreException;
-    ProductDto updateProduct(ProductDto productDto) throws FakeStoreException;
+    ProductResponseSelfDto getSingleProduct(UUID id);
+    List<ProductResponseSelfDto> getProductList();
+    ProductResponseSelfDto addProduct(ProductRequestSelfDto productRequestSelfDto);
+    ProductResponseSelfDto updateProduct(UUID id,ProductRequestSelfDto productRequestSelfDto);
+    void deleteProduct(UUID id);
 }
