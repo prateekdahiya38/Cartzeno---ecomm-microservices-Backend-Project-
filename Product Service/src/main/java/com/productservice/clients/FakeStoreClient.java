@@ -1,10 +1,9 @@
 package com.productservice.clients;
 
 import com.productservice.dtos.FakeStoreProductDto;
-import com.productservice.dtos.ProductDto;
+import com.productservice.dtos.FakeStoreProductRequestDto;
 import com.productservice.exceptions.exceptions.FakeStoreException;
-import com.productservice.mappers.ProductMapper;
-import com.productservice.services.ProductService;
+import com.productservice.services.FakeStoreProductService;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -21,8 +20,8 @@ public class FakeStoreClient {
         this.restTemplate = restTemplate;
     }
 
-    public ProductDto getFakeStoreSingleProduct(int id) throws FakeStoreException {
-        String url = ProductService.FAKE_STORE_PRODUCT_URL.concat("/").concat(String.valueOf(id));
+    public FakeStoreProductDto getFakeStoreSingleProduct(int id) throws FakeStoreException {
+        String url = FakeStoreProductService.FAKE_STORE_PRODUCT_URL.concat("/").concat(String.valueOf(id));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Void> entity = new HttpEntity<>(headers);
@@ -30,43 +29,49 @@ public class FakeStoreClient {
         if (fakeStoreProductDto.getBody() == null) {
             throw new FakeStoreException("Something went wrong...");
         }
-        return ProductMapper.toProductDto(fakeStoreProductDto.getBody());
+        return fakeStoreProductDto.getBody();
     }
 
 
 
-    public List<ProductDto> getAllFakeStoreProducts() throws FakeStoreException {
-        ResponseEntity<FakeStoreProductDto[]> fakeStoreProductArrDto = restTemplate.exchange(ProductService.FAKE_STORE_PRODUCT_URL,HttpMethod.GET, null, FakeStoreProductDto[].class);
+    public List<FakeStoreProductDto> getAllFakeStoreProducts() throws FakeStoreException {
+        ResponseEntity<FakeStoreProductDto[]> fakeStoreProductArrDto = restTemplate.exchange(FakeStoreProductService.FAKE_STORE_PRODUCT_URL,HttpMethod.GET, null, FakeStoreProductDto[].class);
         if (fakeStoreProductArrDto.getBody() == null) {
             throw new FakeStoreException("Something Went Wrong..");
         }
         FakeStoreProductDto[] response = fakeStoreProductArrDto.getBody();
-        return Arrays.stream(response).map(ProductMapper::toProductDto).collect(Collectors.toList());
+        return Arrays.stream(response).collect(Collectors.toList());
     }
 
 
 
-    public ProductDto addFakeStoreProduct(ProductDto productDto) throws FakeStoreException {
+    public FakeStoreProductDto addFakeStoreProduct(FakeStoreProductRequestDto fakeStoreProductRequestDto) throws FakeStoreException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<ProductDto> entity = new HttpEntity<>(productDto, headers);
-        ResponseEntity<FakeStoreProductDto> fakeStoreProduct = restTemplate.exchange(ProductService.FAKE_STORE_PRODUCT_URL,HttpMethod.POST,entity,FakeStoreProductDto.class);
+        HttpEntity<FakeStoreProductRequestDto> entity = new HttpEntity<>(fakeStoreProductRequestDto, headers);
+        ResponseEntity<FakeStoreProductDto> fakeStoreProduct = restTemplate.exchange(FakeStoreProductService.FAKE_STORE_PRODUCT_URL,HttpMethod.POST,entity,FakeStoreProductDto.class);
         if (fakeStoreProduct.getBody() == null) {
             throw new FakeStoreException("Product is not added correctly in the fake store");
         }
-        return ProductMapper.toProductDto(fakeStoreProduct.getBody());
+        return fakeStoreProduct.getBody();
     }
 
 
-    public ProductDto updateFakeStoreProduct(ProductDto productDto) throws FakeStoreException {
-        String url = ProductService.FAKE_STORE_PRODUCT_URL.concat("/").concat(String.valueOf(productDto.getId()));
+    public FakeStoreProductDto updateFakeStoreProduct(int id, FakeStoreProductRequestDto fakeStoreProductRequestDto) throws FakeStoreException {
+        String url = FakeStoreProductService.FAKE_STORE_PRODUCT_URL.concat("/").concat(String.valueOf(id));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<ProductDto> entity = new HttpEntity<>(productDto, headers);
+        HttpEntity<FakeStoreProductRequestDto> entity = new HttpEntity<>(fakeStoreProductRequestDto, headers);
         ResponseEntity<FakeStoreProductDto> fakeStoreProduct = restTemplate.exchange(url,HttpMethod.PUT,entity,FakeStoreProductDto.class);
         if (fakeStoreProduct.getBody() == null) {
             throw new FakeStoreException("Product is not updated correctly in the fake store");
         }
-        return ProductMapper.toProductDto(fakeStoreProduct.getBody());
+        return fakeStoreProduct.getBody();
+    }
+
+
+    public void deleteFakeStoreProduct(int id){
+        String url = FakeStoreProductService.FAKE_STORE_PRODUCT_URL.concat("/").concat(String.valueOf(id));
+        restTemplate.exchange(url,HttpMethod.DELETE,null,String.class);
     }
 }

@@ -1,9 +1,10 @@
 package com.productservice.controllers;
 
 
-import com.productservice.dtos.ProductDto;
+import com.productservice.dtos.FakeStoreProductDto;
+import com.productservice.dtos.FakeStoreProductRequestDto;
 import com.productservice.exceptions.exceptions.FakeStoreException;
-import com.productservice.services.ProductService;
+import com.productservice.services.FakeStoreProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,29 +15,35 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/fake-store")
 public class FakeStoreController {
-    private final ProductService productService;
+    private final FakeStoreProductService productService;
 
-    public FakeStoreController(ProductService productService) {
+    public FakeStoreController(FakeStoreProductService productService) {
         this.productService = productService;
     }
 
     @GetMapping("/products/{productId}")
-    public ResponseEntity<ProductDto> getSingleProduct (@PathVariable("productId") int id) throws FakeStoreException {
+    public ResponseEntity<FakeStoreProductDto> getSingleProduct (@PathVariable("productId") int id) throws FakeStoreException {
         return ResponseEntity.ok(productService.getSingleProduct(id));
     }
 
     @GetMapping ("/products")
-    public List<ProductDto> getAllProducts() throws FakeStoreException {
-        return productService.getAllProducts();
+    public ResponseEntity<List<FakeStoreProductDto>> getAllProducts() throws FakeStoreException {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @PostMapping("/products")
-    public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDto) throws FakeStoreException {
-        return new ResponseEntity<>(productService.addProduct(productDto),HttpStatus.OK);
+    public ResponseEntity<FakeStoreProductDto> addProduct(@RequestBody FakeStoreProductRequestDto fakeStoreProductRequestDto) throws FakeStoreException {
+        return new ResponseEntity<>(productService.addProduct(fakeStoreProductRequestDto),HttpStatus.CREATED);
     }
 
-    @PutMapping("/products")
-    public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productDto) throws FakeStoreException {
-       return ResponseEntity.ok(productService.updateProduct(productDto));
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<FakeStoreProductDto> updateProduct(@PathVariable("productId") int id, @RequestBody FakeStoreProductRequestDto fakeStoreProductRequestDto) throws FakeStoreException {
+       return ResponseEntity.ok(productService.updateProduct(id, fakeStoreProductRequestDto));
+    }
+
+    @DeleteMapping ("/products/{productId}")
+    public ResponseEntity<String> deleteProduct(@PathVariable("productId") int id){
+        productService.deleteProduct(id);
+        return ResponseEntity.ok("The Product with ID: " + id + " has been deleted Successfully");
     }
 }

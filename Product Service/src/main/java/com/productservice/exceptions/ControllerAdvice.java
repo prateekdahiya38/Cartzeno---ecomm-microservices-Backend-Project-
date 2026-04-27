@@ -1,16 +1,18 @@
 package com.productservice.exceptions;
 
+import com.productservice.exceptions.exceptions.CategoryAlreadyPresentException;
+import com.productservice.exceptions.exceptions.CategoryNotFoundException;
 import com.productservice.exceptions.exceptions.FakeStoreException;
+import com.productservice.exceptions.exceptions.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
-@ControllerAdvice
-public class ProductControllerAdvice {
+@org.springframework.web.bind.annotation.ControllerAdvice
+public class ControllerAdvice {
     private final ExceptionResponseDto response = new ExceptionResponseDto();
 
     @ExceptionHandler(FakeStoreException.class)
@@ -36,6 +38,21 @@ public class ProductControllerAdvice {
     @ExceptionHandler(ResourceAccessException.class)
     public ResponseEntity<ExceptionResponseDto> handleTimeout(ResourceAccessException ex) {
         return buildResponse("Timeout or network issue", HttpStatus.GATEWAY_TIMEOUT);
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<ExceptionResponseDto> productNotFoundException(ProductNotFoundException ex){
+        return buildResponse(ex.getMessage() + ",Please check again", HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ExceptionResponseDto> categoryNotFoundException(CategoryNotFoundException ex) {
+        return buildResponse( ex.getMessage() + ",Please select the correct category", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CategoryAlreadyPresentException.class)
+    public ResponseEntity<ExceptionResponseDto> categoryAlreadyFoundException(CategoryAlreadyPresentException ex) {
+        return buildResponse( ex.getMessage() + " Please try another category name", HttpStatus.BAD_REQUEST);
     }
 
     private ResponseEntity<ExceptionResponseDto> buildResponse(String message, HttpStatus status) {
